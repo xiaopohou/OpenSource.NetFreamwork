@@ -1,2 +1,2 @@
 # OpenSource.Freamwork
-开源DDD框架
+开源框架

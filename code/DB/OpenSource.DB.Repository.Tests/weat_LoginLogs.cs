@@ -20,7 +20,7 @@ namespace OpenSource.DB.Repository.Tests
         public string url { get; set; }
         public DateTime loginTime { get; set; }
         public string mode { get; set; }
-        [LeftJoinAttribute("weat_LoginLogs","loginName", "loginName")]
-        public LoginLogs loings { get; set; }
+        [LeftJoinAttribute("weat_Logins", "loginName", "loginName")]
+        public Logins loings { get; set; }
     }
 }

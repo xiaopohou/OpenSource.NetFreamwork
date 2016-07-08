@@ -52,9 +52,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="LoginLogs.cs" />
+    <Compile Include="Logins.cs" />
     <Compile Include="weat_LoginLogs.cs" />
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="DapperExTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

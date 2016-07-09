@@ -1,0 +1,75 @@
+<#
+if (string.IsNullOrEmpty(Namespace)) Namespace=ConnectionStringName;
+if (string.IsNullOrEmpty(RepoName) && !string.IsNullOrEmpty(ConnectionStringName)) RepoName=ConnectionStringName + "DB";
+if (string.IsNullOrEmpty(Namespace)) Namespace="OpenSource";
+if (string.IsNullOrEmpty(RepoName)) RepoName="OpenSourceDB";
+#>
+
+<# if (GeneratePocos) { #>
+<#@include file="MutipleOutputHelper.ttinclude"#>
+<#
+var manager = Manager.Create(Host,GenerationEnvironment);
+foreach(Table tbl in from t in tables where !t.Ignore select t)
+{
+manager.StartNewFile(tbl.Name+".cs");#>  
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using OpenSource.DB.Repository.Attributes;
+
+namespace OpenSource.Model
+{
+[Table("<#=tbl.Name#>")]
+<# if (tbl.PK!=null && tbl.PK.IsAutoIncrement) { if (tbl.SequenceName==null) { #>
+<# } else { #>
+<# } #>
+<# } #>
+    public class <#=tbl.Name#> <# if (GenerateOperations) { #>: <#=RepoName#>.Record<<#=tbl.Name#>> <# } #>
+    {
+<#
+isKey=true; 
+foreach(Column col in from c in tbl.Columns where !c.Ignore select c)
+{
+#>
+
+<# if (TrackModifiedColumns) { #>
+<# if (col.Name!=col.PropertyName) { #>
+        [Column("<#=col.Name#>")] 
+<# } else { #>
+        
+<# } #>
+		public <#=col.PropertyType #><#=CheckNullable(col)#> <#=col.PropertyName #> 
+		{ 
+			get
+			{
+				return _<#=col.PropertyName #>;
+			}
+			set
+			{
+				_<#=col.PropertyName #> = value;
+				MarkColumnModified("<#=col.Name#>");
+			}
+		}
+		<#=col.PropertyType #><#=CheckNullable(col)#> _<#=col.PropertyName #>;
+
+<# } else { #>
+<# if (isKey) { #>
+     [Key]
+	 [Identity]
+<# isKey=false; #>	
+<# } else { #>
+<# } #>
+	public <#=col.PropertyType #><#=CheckNullable(col)#> <#=col.PropertyName #> { get; set; }
+<# } #>
+<# } #>
+	}
+}
+<# } #>
+<#
+manager.EndBlock();
+ 
+manager.Process(true);
+ #>
+
+<# } #>
+

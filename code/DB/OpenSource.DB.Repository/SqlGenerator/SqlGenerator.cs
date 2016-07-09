@@ -1,15 +1,17 @@
 ﻿using OpenSource.DB.Repository.Attributes;
 using OpenSource.DB.Repository.Attributes.Joins;
-using OpenSource.DB.Repository.Attributes.LogicalDelete;
 using OpenSource.DB.Repository.Extensions;
+using OpenSource.Helps.DB.DbAttributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.SqlClient;
 using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Security.Policy;
 using System.Text;
 
 namespace OpenSource.DB.Repository.SqlGenerator
@@ -20,7 +22,7 @@ namespace OpenSource.DB.Repository.SqlGenerator
         public SqlGenerator(ESqlConnector sqlConnector)
         {
             SqlConnector = sqlConnector;
-            var entityType = typeof (TEntity);
+            var entityType = typeof(TEntity);
             var entityTypeInfo = entityType.GetTypeInfo();
             var aliasAttribute = entityTypeInfo.GetCustomAttribute<TableAttribute>();
 
@@ -56,7 +58,7 @@ namespace OpenSource.DB.Repository.SqlGenerator
             }
             else if (statusProperty.PropertyType.IsEnum())
             {
-              
+
                 var deleteOption =
                     statusProperty.PropertyType.GetFields()
                         .FirstOrDefault(f => f.GetCustomAttribute<DeletedAttribute>() != null);
@@ -295,6 +297,37 @@ namespace OpenSource.DB.Repository.SqlGenerator
             }
 
             return new SqlQuery(sqlBuilder.ToString(), entity);
+        }
+
+
+        public virtual SqlQuery GetSelectCount(string sql, object param)
+        {
+            return new SqlQuery(string.Format("SELECT COUNT(*) FROM ({0}) Repository", sql), param);
+        }
+
+        public virtual SqlQuery GetSelectPages(long from, long to, string sql, object param)
+        {
+            var sqlBuilder = new StringBuilder();
+            if (this.IsIdentity)
+            {
+                switch (SqlConnector)
+                {
+                    case ESqlConnector.MSSQL:
+                        sqlBuilder.AppendFormat("SELECT  * FROM ( SELECT ROW_NUMBER() OVER (ORDER BY {0}) AS RowNum,{1})Repository WHERE RowNum BETWEEN {2}AND {3}", this.IdentityProperty.ColumnName, sql.Substring(sql.ToUpper().IndexOf("SELECT")+6), (from - 1) * to + 1, from * to);
+                        break;
+
+                    case ESqlConnector.MySQL:
+                        sqlBuilder.AppendFormat("; SELECT * FROM ({0} ORDER BY {1})Repository WHERE  {1} LIMIT {2},{3} ", sql, this.IdentityProperty.ColumnName, from - 1, to);
+                        break;
+
+                    case ESqlConnector.PostgreSQL:
+                        sqlBuilder.AppendFormat("SELECT * FROM ({0} ORDER BY {1})Repository LIMIT {1} OFFSET {2}", sql, to, (from - 1) * to);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            return new SqlQuery(sqlBuilder.ToString(), param);
         }
 
         #endregion Get Select

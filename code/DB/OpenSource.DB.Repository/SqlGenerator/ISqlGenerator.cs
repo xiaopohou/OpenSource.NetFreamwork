@@ -40,5 +40,9 @@ namespace OpenSource.DB.Repository.SqlGenerator
         SqlQuery GetUpdate(TEntity entity);
 
         SqlQuery GetDelete(TEntity entity);
+
+        SqlQuery GetSelectCount(string sql,object param);
+
+        SqlQuery GetSelectPages(long from, long to,string sql, object param);
     }
 }

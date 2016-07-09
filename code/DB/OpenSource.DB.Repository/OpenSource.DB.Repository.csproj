@@ -30,10 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Dapper, Version=1.40.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Dapper.1.42\lib\net45\Dapper.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -45,18 +41,58 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\DeletedAttribute.cs" />
-    <Compile Include="Attributes\IdentityAttribute.cs" />
-    <Compile Include="Attributes\InnerJoinAttribute.cs" />
-    <Compile Include="Attributes\JoinAttributeBase.cs" />
-    <Compile Include="Attributes\LeftJoinAttribute.cs" />
-    <Compile Include="Attributes\RightJoinAttribute.cs" />
-    <Compile Include="Attributes\StatusAttribute.cs" />
+    <Compile Include="Cache\DapperDbContextDir.cs" />
+    <Compile Include="Cache\SqlGeneratorDir.cs" />
     <Compile Include="DapperRepository.cs" />
+    <Compile Include="Dapper\CommandDefinition.cs" />
+    <Compile Include="Dapper\CommandFlags.cs" />
+    <Compile Include="Dapper\CustomPropertyTypeMap.cs" />
+    <Compile Include="Dapper\DataTableHandler.cs" />
+    <Compile Include="Dapper\DbString.cs" />
+    <Compile Include="Dapper\DefaultTypeMap.cs" />
+    <Compile Include="Dapper\DynamicParameters.CachedOutputSetters.cs" />
+    <Compile Include="Dapper\DynamicParameters.cs" />
+    <Compile Include="Dapper\DynamicParameters.ParamInfo.cs" />
+    <Compile Include="Dapper\ExplicitConstructorAttribute.cs" />
+    <Compile Include="Dapper\FeatureSupport.cs" />
+    <Compile Include="Dapper\SimpleMemberMap.cs" />
+    <Compile Include="Dapper\SqlDataRecordHandler.cs" />
+    <Compile Include="Dapper\SqlDataRecordListTVPParameter.cs" />
+    <Compile Include="Dapper\SqlMapper.Async.cs" />
+    <Compile Include="Dapper\SqlMapper.CacheInfo.cs" />
+    <Compile Include="Dapper\SqlMapper.cs" />
+    <Compile Include="Dapper\SqlMapper.DapperRow.cs" />
+    <Compile Include="Dapper\SqlMapper.DapperRowMetaObject.cs" />
+    <Compile Include="Dapper\SqlMapper.DataTable.cs" />
+    <Compile Include="Dapper\SqlMapper.DeserializerState.cs" />
+    <Compile Include="Dapper\SqlMapper.DontMap.cs" />
+    <Compile Include="Dapper\SqlMapper.GridReader.Async.cs" />
+    <Compile Include="Dapper\SqlMapper.GridReader.cs" />
+    <Compile Include="Dapper\SqlMapper.ICustomQueryParameter.cs" />
+    <Compile Include="Dapper\SqlMapper.IDataReader.cs" />
+    <Compile Include="Dapper\SqlMapper.Identity.cs" />
+    <Compile Include="Dapper\SqlMapper.IDynamicParameters.cs" />
+    <Compile Include="Dapper\SqlMapper.IMemberMap.cs" />
+    <Compile Include="Dapper\SqlMapper.IParameterCallbacks.cs" />
+    <Compile Include="Dapper\SqlMapper.IParameterLookup.cs" />
+    <Compile Include="Dapper\SqlMapper.ITypeHandler.cs" />
+    <Compile Include="Dapper\SqlMapper.ITypeMap.cs" />
+    <Compile Include="Dapper\SqlMapper.Link.cs" />
+    <Compile Include="Dapper\SqlMapper.LiteralToken.cs" />
+    <Compile Include="Dapper\SqlMapper.Settings.cs" />
+    <Compile Include="Dapper\SqlMapper.TypeDeserializerCache.cs" />
+    <Compile Include="Dapper\SqlMapper.TypeHandler.cs" />
+    <Compile Include="Dapper\SqlMapper.TypeHandlerCache.cs" />
+    <Compile Include="Dapper\TableValuedParameter.cs" />
+    <Compile Include="Dapper\TypeExtensions.cs" />
+    <Compile Include="Dapper\UdtTypeHandler.cs" />
+    <Compile Include="Dapper\WrappedDataReader.cs" />
+    <Compile Include="Dapper\WrappedReader.cs" />
+    <Compile Include="Dapper\XmlHandlers.cs" />
     <Compile Include="DbContext\DapperDbContext.cs" />
-    <Compile Include="DbContext\IDapperDbContext.cs" />
+    <Compile Include="DbContext\IDbConnectionBuilder.cs" />
+    <Compile Include="DbContext\MSSQLDbConnectionBuilder.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
-    <Compile Include="IDapperRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlGenerator\ESqlConnector.cs" />
     <Compile Include="SqlGenerator\ExpressionHelper.cs" />
@@ -67,7 +103,19 @@
     <Compile Include="SqlGenerator\SqlGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\..\Helps\OpenSource.Helps\OpenSource.Helps.csproj">
+      <Project>{19dfa6b4-1174-42f3-b504-0c2ebd1c12ab}</Project>
+      <Name>OpenSource.Helps</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenSource.DB.IRepository\OpenSource.DB.IRepository.csproj">
+      <Project>{915c5bd5-c657-44a0-9bbf-4b53c6ccc2a1}</Project>
+      <Name>OpenSource.DB.IRepository</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="OpenSource.DB.Repositroy.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

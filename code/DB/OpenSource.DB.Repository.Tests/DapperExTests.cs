@@ -15,28 +15,21 @@ namespace OpenSource.DB.Repository.Tests
         [TestMethod]
         public void FindTests()
         {
-
-            IDbConnection conn = new SqlConnection("server=192.168.1.186;database=WeatServices;uid=sa;pwd=123");
-            IDapperRepository<weat_LoginLogs> _dapper = new DapperRepository<weat_LoginLogs>(conn, ESqlConnector.MSSQL);
-            var result = _dapper.FindAll(x => x.loginName == "15013797373");
             Assert.IsTrue(true);
         }
 
         [TestMethod]
         public void FindPageTest()
         {
-            IDbConnection conn = new SqlConnection("server=192.168.1.186;database=WeatServices;uid=sa;pwd=123");
-            IDapperRepository<weat_LoginLogs> _dapper = new DapperRepository<weat_LoginLogs>(conn, ESqlConnector.MSSQL);
-            var result = _dapper.FindAllBetween(1, 10, (x => x.id));
+            DapperRepository<tbl_PublicAccount> _dapper = new DapperRepository<tbl_PublicAccount>();
             Assert.IsTrue(true);
         }
 
         [TestMethod]
         public void UpdateTests()
         {
-            IDbConnection conn = new SqlConnection("server=192.168.1.186;database=WeatServices;uid=sa;pwd=123");
-            IDapperRepository<weat_LoginLogs> _dapper = new DapperRepository<weat_LoginLogs>(conn, ESqlConnector.MSSQL);
-            var result = _dapper.FindAll(x => x.loginName == "15013797373").FirstOrDefault();
+            DapperRepository<tbl_PublicAccount> _dapper = new DapperRepository<tbl_PublicAccount>();
+            var result = _dapper.FindAll(x => x.Openid == "o0DpJxBxK9ZzYd8DiObV84GDru64").FirstOrDefault();
             _dapper.Update(result);
             Assert.IsTrue(true);
         }
@@ -44,22 +37,23 @@ namespace OpenSource.DB.Repository.Tests
         [TestMethod]
         public void DeleteTests()
         {
-            IDbConnection conn = new SqlConnection("server=192.168.1.186;database=WeatServices;uid=sa;pwd=123");
-            IDapperRepository<weat_LoginLogs> _dapper = new DapperRepository<weat_LoginLogs>(conn, ESqlConnector.MSSQL);
-            var result = _dapper.FindAll(x => x.loginName == "15013797373").FirstOrDefault();
-            result.loginName = "9999";
-            _dapper.DeleteAsync(result);
+            DapperRepository<tbl_PublicAccount> _dapper = new DapperRepository<tbl_PublicAccount>();
             Assert.IsTrue(true);
         }
 
         [TestMethod]
         public void InsertTests()
         {
-            IDbConnection conn = new SqlConnection("server=192.168.1.186;database=WeatServices;uid=sa;pwd=123");
-            IDapperRepository<weat_LoginLogs> _dapper = new DapperRepository<weat_LoginLogs>(conn, ESqlConnector.MSSQL);
-            var result = _dapper.FindAll(x => x.loginName == "15013797373" && x.id == 28).FirstOrDefault();
-            result.loginName = "9999";
-            _dapper.Insert(result);
+            DapperRepository<tbl_PublicAccount> _dapper = new DapperRepository<tbl_PublicAccount>();
+       
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public void PagesTests()
+        {
+            DapperRepository<tbl_PublicAccount> _dapper = new DapperRepository<tbl_PublicAccount>();
+         
             Assert.IsTrue(true);
         }
     }

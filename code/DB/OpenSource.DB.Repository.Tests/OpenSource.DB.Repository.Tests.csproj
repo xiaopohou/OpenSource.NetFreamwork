@@ -52,12 +52,19 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Logins.cs" />
-    <Compile Include="weat_LoginLogs.cs" />
+    <Compile Include="PublicAccount.cs" />
     <Compile Include="DapperExTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Helps\OpenSource.Helps\OpenSource.Helps.csproj">
+      <Project>{19dfa6b4-1174-42f3-b504-0c2ebd1c12ab}</Project>
+      <Name>OpenSource.Helps</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenSource.DB.IRepository\OpenSource.DB.IRepository.csproj">
+      <Project>{915c5bd5-c657-44a0-9bbf-4b53c6ccc2a1}</Project>
+      <Name>OpenSource.DB.IRepository</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenSource.DB.Repository\OpenSource.DB.Repository.csproj">
       <Project>{75da3234-5bf3-40cd-b4fb-42e50f92d39a}</Project>
       <Name>OpenSource.DB.Repository</Name>

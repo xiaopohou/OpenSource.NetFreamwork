@@ -1,16 +1,15 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // 有关程序集的一般信息由以下
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("OpenSource.DB.Repository")]
+[assembly: AssemblyTitle("OpenSource.DB.IRepository")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("OpenSource.DB.Repository")]
+[assembly: AssemblyProduct("OpenSource.DB.IRepository")]
 [assembly: AssemblyCopyright("Copyright © Microsoft 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -21,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // 如果此项目向 COM 公开，则下列 GUID 用于类型库的 ID
-[assembly: Guid("75da3234-5bf3-40cd-b4fb-42e50f92d39a")]
+[assembly: Guid("915c5bd5-c657-44a0-9bbf-4b53c6ccc2a1")]
 
 // 程序集的版本信息由下列四个值组成: 
 //

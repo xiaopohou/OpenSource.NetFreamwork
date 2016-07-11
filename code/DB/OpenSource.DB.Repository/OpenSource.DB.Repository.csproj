@@ -113,9 +113,22 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CodeGeneration\Database.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Database.cs</LastGenOutput>
+    </Content>
     <Content Include="OpenSource.DB.Repositroy.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="CodeGeneration\MutipleOutputHelper.ttinclude" />
+    <None Include="CodeGeneration\OpenSource.Core.ttinclude" />
+    <None Include="CodeGeneration\OpenSource.Generator.ttinclude" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,0 +1,37 @@
+<#
+if (string.IsNullOrEmpty(Namespace)) Namespace=ConnectionStringName;
+if (string.IsNullOrEmpty(RepoName) && !string.IsNullOrEmpty(ConnectionStringName)) RepoName=ConnectionStringName + "DB";
+if (string.IsNullOrEmpty(Namespace)) Namespace="OpenSource";
+if (string.IsNullOrEmpty(RepoName)) RepoName="OpenSourceDB";
+#>
+
+<# if (GeneratePocos) { #>
+<#@include file="MutipleOutputHelper.ttinclude"#>
+<#
+var manager = Manager.Create(Host,GenerationEnvironment);
+foreach(Table tbl in from t in tables where !t.Ignore select t)
+{
+manager.StartNewFile(tbl.Name+"Repository.cs");#>  
+using System;
+using OpenSource.DB.Repository;
+using OpenSource.Model;
+
+namespace OpenSource.Model
+{
+<# if (tbl.PK!=null && tbl.PK.IsAutoIncrement) { if (tbl.SequenceName==null) { #>
+<# } else { #>
+<# } #>
+<# } #>
+    public class <#=tbl.Name#>Repository:DapperRepository<<#=tbl.Name#>>,I<#=tbl.Name#>Repository
+    {
+	}
+}
+<# } #>
+<#
+manager.EndBlock();
+ 
+manager.Process(true);
+ #>
+
+<# } #>
+

@@ -23,20 +23,22 @@ namespace OpenSource.DB.Repository.Cache
 
         public DapperDbContextDir(Type obj)
         {
+            var name = obj.Name;
+            var key = settingDis.ContainsKey(name) ? name : "default";
+
             SqlConnectionString();
+            config = settingDis[key];
+
+            if (dicDbConnectionPool.ContainsKey(key)) return;
+
             lock (dicDbConnectionPool)
             {
-                var name = obj.Name;
-                var setting = settingDis.ContainsKey(name);
-                var key = setting ? name : "default";
-                config = settingDis[key];
                 if (!dicDbConnectionPool.ContainsKey(key))
                 {
                     dicDbConnectionPool[key] = new DapperDbContext(config.ConnectionString);
                 }
             }
         }
-
 
         /// <summary>
         /// 读取数据库连接配置文件
@@ -68,7 +70,7 @@ namespace OpenSource.DB.Repository.Cache
 
         #endregion
 
-   
+
     }
 
 

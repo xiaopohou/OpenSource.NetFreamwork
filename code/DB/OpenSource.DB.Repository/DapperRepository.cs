@@ -17,12 +17,13 @@ namespace OpenSource.DB.Repository
 {
     public class DapperRepository<TEntity> : IDapperRepository<TEntity> where TEntity : class
     {
-        public DapperDbContext MyConnection = new DapperDbContextDir(typeof(TEntity)).dbConnPool;
-
         public DapperRepository()
         {
+            MyConnection = new DapperDbContextDir(typeof(TEntity)).dbConnPool;
             SqlGenerator = SqlGeneratorDir.ExistModelDesCache<TEntity>(ESqlConnector.MSSQL);
         }
+
+        public DapperDbContext MyConnection { get; }
 
         public ISqlGenerator<TEntity> SqlGenerator { get; }
 
@@ -94,7 +95,7 @@ namespace OpenSource.DB.Repository
 
         public virtual bool Delete(TEntity instance)
         {
-       
+
             var queryResult = SqlGenerator.GetDelete(instance);
             var Connection = MyConnection.Pop();
             var deleted = Connection.Execute(queryResult.Sql, queryResult.Param) > 0;
@@ -128,7 +129,7 @@ namespace OpenSource.DB.Repository
 
         public IEnumerable<TEntity> FindAllBetween(object from, object to, Expression<Func<TEntity, object>> btwField, Expression<Func<TEntity, bool>> expression)
         {
-            
+
             var queryResult = SqlGenerator.GetSelectBetween(from, to, btwField, expression);
             var Connection = MyConnection.Pop();
             var data = Connection.Query<TEntity>(queryResult.Sql, queryResult.Param);
@@ -143,12 +144,12 @@ namespace OpenSource.DB.Repository
 
         public PageListView<TEntity> FindAllPages(long from, long to, Expression<Func<TEntity, bool>> expression)
         {
-        
+
             var queryResult = SqlGenerator.GetSelectAll(expression);
             var countResult = SqlGenerator.GetSelectCount(queryResult.Sql, queryResult.Param);
             var pageResult = SqlGenerator.GetSelectPages(from, to, queryResult.Sql, queryResult.Param);
             var Connection = MyConnection.Pop();
-            var result= new PageListView<TEntity>
+            var result = new PageListView<TEntity>
             {
                 PageIndex = from,
                 PageSize = to,

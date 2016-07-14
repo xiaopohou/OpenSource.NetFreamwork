@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <configs>
-  <config key="OpenSource.IServices" value="OpenSource.Services" />
+  <!--<config key="OpenSource.IServices" value="OpenSource.Services" />-->
   <config key="OpenSource.DB.IRepository" value="OpenSource.DB.Repository" />
 </configs>

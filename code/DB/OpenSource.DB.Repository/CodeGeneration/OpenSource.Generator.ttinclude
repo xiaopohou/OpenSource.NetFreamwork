@@ -13,6 +13,7 @@ foreach(Table tbl in from t in tables where !t.Ignore select t)
 {
 manager.StartNewFile(tbl.Name+"Repository.cs");#>  
 using System;
+using OpenSource.DB.IRepository;
 using OpenSource.DB.Repository;
 using OpenSource.Model;
 

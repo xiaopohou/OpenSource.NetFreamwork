@@ -50,7 +50,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="CodeGeneration\MutipleOutputHelper.ttinclude" />
     <None Include="CodeGeneration\OpenSource.Core.ttinclude" />
     <None Include="CodeGeneration\OpenSource.Generator.ttinclude" />

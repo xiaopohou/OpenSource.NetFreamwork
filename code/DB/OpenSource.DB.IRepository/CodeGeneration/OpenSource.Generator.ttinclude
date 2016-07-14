@@ -21,7 +21,7 @@ namespace OpenSource.DB.IRepository
 <# } else { #>
 <# } #>
 <# } #>
-    public class I<#=tbl.Name#>Repository:IDapperRepository<<#=tbl.Name#>>
+    public interface I<#=tbl.Name#>Repository:IDapperRepository<<#=tbl.Name#>>
     {
 	}
 }

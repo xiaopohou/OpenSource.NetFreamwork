@@ -5,6 +5,7 @@ using OpenSource.DB.Repository.DbContext;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using OpenSource.DB.IRepository;
 using OpenSource.DB.Repository.SqlGenerator;
 
 namespace OpenSource.DB.Repository.Tests
@@ -21,7 +22,9 @@ namespace OpenSource.DB.Repository.Tests
         [TestMethod]
         public void FindPageTest()
         {
-            DapperRepository<tbl_PublicAccount> _dapper = new DapperRepository<tbl_PublicAccount>();
+            //var result = IocManager.IOCManager.Container.GetInstance<Itbl_PublicAccountRepository>();
+            //result.Find(x => x.Groupid == 2);
+            //DapperRepository<tbl_PublicAccount> _dapper = new DapperRepository<tbl_PublicAccount>();
             Assert.IsTrue(true);
         }
 

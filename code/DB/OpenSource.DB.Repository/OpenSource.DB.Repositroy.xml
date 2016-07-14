@@ -1,4 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <configs>
-  <config key="default" connectionString="" providerName="System.Data.SqlClient" DBtype="" ></config>
+  <config key="default" connectionString="server=192.168.1.186;database=WeatMeidaWeChat;uid=sa;pwd=123" providerName="System.Data.SqlClient" DBtype="" ></config>
 </configs>

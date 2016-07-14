@@ -48,6 +48,10 @@
       <Project>{19dfa6b4-1174-42f3-b504-0c2ebd1c12ab}</Project>
       <Name>OpenSource.Helps</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Model\OpenSource.Model\OpenSource.Model.csproj">
+      <Project>{481e0007-3ba7-4459-a041-91adfc8c3f34}</Project>
+      <Name>OpenSource.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

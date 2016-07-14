@@ -61,6 +61,14 @@
       <Project>{19dfa6b4-1174-42f3-b504-0c2ebd1c12ab}</Project>
       <Name>OpenSource.Helps</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Ioc.LightInject\IocManager\IocManager.csproj">
+      <Project>{7187dea8-5bf8-43b1-b91b-380ba13935cb}</Project>
+      <Name>IocManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Model\OpenSource.Model\OpenSource.Model.csproj">
+      <Project>{481e0007-3ba7-4459-a041-91adfc8c3f34}</Project>
+      <Name>OpenSource.Model</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenSource.DB.IRepository\OpenSource.DB.IRepository.csproj">
       <Project>{915c5bd5-c657-44a0-9bbf-4b53c6ccc2a1}</Project>
       <Name>OpenSource.DB.IRepository</Name>

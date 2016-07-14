@@ -25,11 +25,6 @@ namespace OpenSource.DB.Repository
 
         public DapperDbContext MyConnection { get; }
 
-        public DapperDbContext MyConnectionEntity<TEntity>()
-        {
-            return new DapperDbContextDir(typeof(TEntity)).dbConnPool;
-        }
-
         public ISqlGenerator<TEntity> SqlGenerator { get; }
 
         #region Find

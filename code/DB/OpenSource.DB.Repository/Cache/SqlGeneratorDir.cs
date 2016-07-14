@@ -36,7 +36,7 @@ namespace OpenSource.DB.Repository.Cache
 
         public static ISqlGenerator<TEntiy> Add<TEntiy>(ESqlConnector eSql) where TEntiy : class
         {
-            ISqlGenerator<TEntiy> generator = null;
+            object generator;
             lock (objLock)
             {
                 var entityType = typeof(TEntiy).Name.GetHashCode();
@@ -44,10 +44,13 @@ namespace OpenSource.DB.Repository.Cache
                 {
                      generator = new SqlGenerator<TEntiy>(eSql);
                     _ModelDesCache.Add(entityType, generator);
-                    return generator;
+                }
+                else
+                {
+                    _ModelDesCache.TryGetValue(typeof(TEntiy).Name.GetHashCode(), out generator);
                 }
             }
-            return generator;
+            return generator as ISqlGenerator<TEntiy>;
         }
     }
 }

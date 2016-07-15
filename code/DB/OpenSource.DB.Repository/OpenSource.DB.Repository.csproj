@@ -43,6 +43,50 @@
   <ItemGroup>
     <Compile Include="Cache\DapperDbContextDir.cs" />
     <Compile Include="Cache\SqlGeneratorDir.cs" />
+    <Compile Include="CodeGeneration\Database.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Database.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CodeGeneration\tbl_AccountRepository.cs">
+      <DependentUpon>Database.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CodeGeneration\tbl_MassRepository.cs">
+      <DependentUpon>Database.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CodeGeneration\tbl_MatterRepository.cs">
+      <DependentUpon>Database.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CodeGeneration\tbl_MetaAccountRepository.cs">
+      <DependentUpon>Database.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CodeGeneration\tbl_MetaCateRepository.cs">
+      <DependentUpon>Database.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CodeGeneration\tbl_MetaClassRepository.cs">
+      <DependentUpon>Database.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CodeGeneration\tbl_MetaRepository.cs">
+      <DependentUpon>Database.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CodeGeneration\tbl_PublicAccountRepository.cs">
+      <DependentUpon>Database.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CodeGeneration\tbl_PublicBasicInfoRepository.cs">
+      <DependentUpon>Database.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CodeGeneration\tbl_RequestReplyRepository.cs">
+      <DependentUpon>Database.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CodeGeneration\tbl_WeatEventRepository.cs">
+      <DependentUpon>Database.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CodeGeneration\tbl_WeChatGroupRepository.cs">
+      <DependentUpon>Database.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CodeGeneration\tbl_WeChatReplyRepository.cs">
+      <DependentUpon>Database.tt</DependentUpon>
+    </Compile>
     <Compile Include="DapperRepository.cs" />
     <Compile Include="Dapper\CommandDefinition.cs" />
     <Compile Include="Dapper\CommandFlags.cs" />

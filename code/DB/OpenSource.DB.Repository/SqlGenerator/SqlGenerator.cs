@@ -10,6 +10,7 @@ using System.Data.SqlClient;
 using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Security.Policy;
 using System.Text;
@@ -32,10 +33,13 @@ namespace OpenSource.DB.Repository.SqlGenerator
             var props = AllProperties.Where(ExpressionHelper.GetPrimitivePropertiesPredicate()).ToArray();
 
             //Filter the non stored properties
-            this.BaseProperties = props.Where(p => !p.GetCustomAttributes<NotMappedAttribute>().Any()).Select(p => new PropertyMetadata(p));
+            this.BaseProperties =
+                props.Where(p => !p.GetCustomAttributes<NotMappedAttribute>().Any())
+                    .Select(p => new PropertyMetadata(p));
 
             //Filter key properties
-            this.KeyProperties = props.Where(p => p.GetCustomAttributes<KeyAttribute>().Any()).Select(p => new PropertyMetadata(p));
+            this.KeyProperties =
+                props.Where(p => p.GetCustomAttributes<KeyAttribute>().Any()).Select(p => new PropertyMetadata(p));
 
             //Use identity as key pattern
             var identityProperty = props.FirstOrDefault(p => p.GetCustomAttributes<IdentityAttribute>().Any());
@@ -68,7 +72,8 @@ namespace OpenSource.DB.Repository.SqlGenerator
                 var enumValue = Enum.Parse(statusProperty.PropertyType, deleteOption.Name);
 
                 if (enumValue != null)
-                    LogicalDeleteValue = Convert.ChangeType(enumValue, Enum.GetUnderlyingType(statusProperty.PropertyType));
+                    LogicalDeleteValue = Convert.ChangeType(enumValue,
+                        Enum.GetUnderlyingType(statusProperty.PropertyType));
 
                 LogicalDelete = true;
             }
@@ -101,18 +106,21 @@ namespace OpenSource.DB.Repository.SqlGenerator
 
         public virtual SqlQuery GetInsert(TEntity entity)
         {
-            List<PropertyMetadata> properties = (this.IsIdentity ?
-                this.BaseProperties.Where(p => !p.Name.Equals(this.IdentityProperty.Name, StringComparison.OrdinalIgnoreCase)) :
-                this.BaseProperties).ToList();
+            List<PropertyMetadata> properties = (this.IsIdentity
+                ? this.BaseProperties.Where(
+                    p => !p.Name.Equals(this.IdentityProperty.Name, StringComparison.OrdinalIgnoreCase))
+                : this.BaseProperties).ToList();
 
-            string columNames = string.Join(", ", properties.Select(p => $"{p.ColumnName}"));
-            string values = string.Join(", ", properties.Select(p => $"@{p.Name}"));
+            string columNames = string.Join(", ", properties.Select(p => $"{p.ColumnName}"))
+            ;
+            string values = string.Join(", ", properties.Select(p => $"@{p.Name}"))
+            ;
 
             var sqlBuilder = new StringBuilder();
             sqlBuilder.AppendFormat("INSERT INTO {0} {1} {2} ",
-                                    this.TableName,
-                                    string.IsNullOrEmpty(columNames) ? "" : $"({columNames})",
-                                    string.IsNullOrEmpty(values) ? "" : $" VALUES ({values})");
+                this.TableName,
+                string.IsNullOrEmpty(columNames) ? "" : $"({columNames})", string.IsNullOrEmpty(values) ? "" : $" VALUES ({values})")
+            ;
 
             if (this.IsIdentity)
             {
@@ -123,7 +131,8 @@ namespace OpenSource.DB.Repository.SqlGenerator
                         break;
 
                     case ESqlConnector.MySQL:
-                        sqlBuilder.Append("; SELECT CONVERT(LAST_INSERT_ID(), SIGNED INTEGER) AS " + this.IdentityProperty.ColumnName);
+                        sqlBuilder.Append("; SELECT CONVERT(LAST_INSERT_ID(), SIGNED INTEGER) AS " +
+                                          this.IdentityProperty.ColumnName);
                         break;
 
                     case ESqlConnector.PostgreSQL:
@@ -139,25 +148,32 @@ namespace OpenSource.DB.Repository.SqlGenerator
 
         public virtual SqlQuery GetUpdate(TEntity entity)
         {
-            var properties = this.BaseProperties.Where(p => !this.KeyProperties.Any(k => k.Name.Equals(p.Name, StringComparison.OrdinalIgnoreCase)));
+            var properties =
+                this.BaseProperties.Where(
+                    p => !this.KeyProperties.Any(k => k.Name.Equals(p.Name, StringComparison.OrdinalIgnoreCase)));
 
             var sqlBuilder = new StringBuilder();
-            sqlBuilder.AppendFormat("UPDATE {0} SET {1} WHERE {2}", this.TableName, string.Join(", ", properties.Select(p => $"{p.ColumnName} = @{p.Name}")), string.Join(" AND ", this.KeyProperties.Select(p => $"{p.ColumnName} = @{p.Name}")));
+            sqlBuilder.AppendFormat("UPDATE {0} SET {1} WHERE {2}", this.TableName,
+                string.Join(", ", properties.Select(p => $"{p.ColumnName} = @{p.Name}")), string.Join(" AND ", this.KeyProperties.Select(p => $"{p.ColumnName} = @{p.Name}")))
+            ;
 
             return new SqlQuery(sqlBuilder.ToString().TrimEnd(), entity);
         }
 
         #region Get Select
 
-        public virtual SqlQuery GetSelectFirst(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
+        public virtual SqlQuery GetSelectFirst(Expression<Func<TEntity, bool>> predicate,
+            params Expression<Func<TEntity, object>>[] includes)
         {
             return GetSelect(predicate, true, includes);
         }
 
-        public virtual SqlQuery GetSelectAll(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includes)
+        public virtual SqlQuery GetSelectAll(Expression<Func<TEntity, bool>> predicate,
+            params Expression<Func<TEntity, object>>[] includes)
         {
             return GetSelect(predicate, false, includes);
         }
+
 
         private StringBuilder InitBuilderSelect(bool firstOnly)
         {
@@ -173,7 +189,9 @@ namespace OpenSource.DB.Repository.SqlGenerator
             return builder;
         }
 
-        private StringBuilder AppendJoinToSelect(StringBuilder originalBuilder, params Expression<Func<TEntity, object>>[] includes)
+
+        private StringBuilder AppendListToSelect(StringBuilder originalBuilder, ref List<QueryParameter> queryProperties,
+            params Expression<Func<TEntity, object>>[] includes)
         {
             var joinsBuilder = new StringBuilder();
 
@@ -198,14 +216,19 @@ namespace OpenSource.DB.Repository.SqlGenerator
                         joinString = "RIGHT JOIN ";
                     }
 
-                    var joinType = joinProperty.PropertyType.IsGenericType() ? joinProperty.PropertyType.GenericTypeArguments[0] : joinProperty.PropertyType;
+                    var joinType = joinProperty.PropertyType.IsGenericType()
+                        ? joinProperty.PropertyType.GenericTypeArguments[0]
+                        : joinProperty.PropertyType;
 
                     var properties = joinType.GetProperties().Where(ExpressionHelper.GetPrimitivePropertiesPredicate());
-                    var props = properties.Where(p => !p.GetCustomAttributes<NotMappedAttribute>().Any()).Select(p => new PropertyMetadata(p));
+                    var props =
+                        properties.Where(p => !p.GetCustomAttributes<NotMappedAttribute>().Any())
+                            .Select(p => new PropertyMetadata(p));
                     originalBuilder.Append(", " + GetFieldsSelect(attrJoin.TableName, props));
 
 
-                    joinsBuilder.Append($"{joinString} {attrJoin.TableName} ON {TableName}.{attrJoin.Key} = {attrJoin.TableName}.{attrJoin.ExternalKey} ");
+                    joinsBuilder.Append($"{joinString} {attrJoin.TableName} ON {TableName}.{attrJoin.Key} = {attrJoin.TableName}.{attrJoin.ExternalKey} ")
+                    ;
                 }
             }
             return joinsBuilder;
@@ -214,28 +237,18 @@ namespace OpenSource.DB.Repository.SqlGenerator
         private static string GetFieldsSelect(string tableName, IEnumerable<PropertyMetadata> properties)
         {
             //Projection function
-            Func<PropertyMetadata, string> projectionFunction = (p) => !string.IsNullOrEmpty(p.Alias)
-                ? $"{tableName}.{p.ColumnName} AS {p.Name}"
-                : $"{tableName}.{p.ColumnName}";
+            Func<PropertyMetadata, string> projectionFunction = (p) => !string.IsNullOrEmpty(p.Alias) ? $"{tableName}.{p.ColumnName} AS {p.Name}" : $"{tableName}.{p.ColumnName}";
 
             return string.Join(", ", properties.Select(projectionFunction));
         }
 
 
-        private SqlQuery GetSelect(Expression<Func<TEntity, bool>> predicate, bool firstOnly, params Expression<Func<TEntity, object>>[] includes)
+        private SqlQuery GetSelect(Expression<Func<TEntity, bool>> predicate, bool firstOnly,
+            params Expression<Func<TEntity, object>>[] includes)
         {
             var builder = InitBuilderSelect(firstOnly);
 
-            if (includes.Any())
-            {
-                var joinsBuilder = AppendJoinToSelect(builder, includes);
-                builder.Append($" FROM {TableName} ");
-                builder.Append(joinsBuilder);
-            }
-            else
-            {
-                builder.Append($" FROM {TableName} ");
-            }
+            builder.Append($" FROM {TableName} ");
 
             IDictionary<string, object> expando = new ExpandoObject();
 
@@ -243,7 +256,9 @@ namespace OpenSource.DB.Repository.SqlGenerator
             {
                 // WHERE
                 var queryProperties = new List<QueryParameter>();
-                FillQueryProperties(ExpressionHelper.GetBinaryExpression(predicate.Body), ExpressionType.Default, ref queryProperties);
+
+                FillQueryProperties(ExpressionHelper.GetExpression(predicate.Body), ExpressionType.Default,
+                    ref queryProperties);
 
                 builder.Append(" WHERE ");
 
@@ -251,17 +266,9 @@ namespace OpenSource.DB.Repository.SqlGenerator
                 for (int i = 0; i < queryProperties.Count; i++)
                 {
                     var item = queryProperties[i];
-
-                    if (!string.IsNullOrEmpty(item.LinkingOperator) && i > 0)
-                    {
-                        builder.Append(string.Format("{0} {1}.{2} {3} @{2} ", item.LinkingOperator, TableName, item.PropertyName, item.QueryOperator));
-                    }
-                    else
-                    {
-                        builder.Append(string.Format("{0}.{1} {2} @{1} ", TableName, item.PropertyName, item.QueryOperator));
-                    }
-
-                    expando[item.PropertyName] = item.PropertyValue;
+                    if (i == 0)
+                        item.LinkingOperator = null;
+                    GetQueryParameterQueryOperator(item, ref expando, ref builder);
                 }
             }
 
@@ -272,7 +279,30 @@ namespace OpenSource.DB.Repository.SqlGenerator
             return new SqlQuery(builder.ToString().TrimEnd(), expando);
         }
 
-        public virtual SqlQuery GetSelectBetween(object from, object to, Expression<Func<TEntity, object>> btwField, Expression<Func<TEntity, bool>> expression)
+        private void GetQueryParameterQueryOperator(QueryParameter item, ref IDictionary<string, object> obj, ref StringBuilder builder)
+        {
+            switch (item.QueryOperator)
+            {
+                case "In":
+                case "Not_In":
+                    builder.Append(string.Format("{0}.{1} {2} ({3}) ", TableName, item.PropertyName,
+                             item.QueryOperator.Replace("_"," "), item.PropertyValue));
+                    break;
+                case "Like":
+                case "Not_Like":
+                    builder.Append(string.Format("{0}.{1} {2} '{3}' ", TableName, item.PropertyName,
+                         item.QueryOperator.Replace("_", " "), item.PropertyValue));
+                    break;
+                default:
+                    builder.Append(string.Format("{0} {1}.{2} {3} @{2} ", item.LinkingOperator, TableName,
+                              item.PropertyName, item.QueryOperator));
+                    obj[item.PropertyName] = item.PropertyValue;
+                    break;
+            }
+        }
+
+        public virtual SqlQuery GetSelectBetween(object from, object to, Expression<Func<TEntity, object>> btwField,
+            Expression<Func<TEntity, bool>> expression)
         {
             var filedName = ExpressionHelper.GetPropertyName(btwField);
             var queryResult = GetSelectAll(expression);
@@ -289,11 +319,13 @@ namespace OpenSource.DB.Repository.SqlGenerator
 
             if (!LogicalDelete)
             {
-                sqlBuilder.AppendFormat("DELETE FROM {0} WHERE {1}", this.TableName, string.Join(" AND ", this.KeyProperties.Select(p => $"{p.ColumnName} = @{p.Name}")));
+                sqlBuilder.AppendFormat("DELETE FROM {0} WHERE {1}", this.TableName,
+                    string.Join(" AND ", this.KeyProperties.Select(p => $"{p.ColumnName} = @{p.Name}")));
             }
             else
             {
-                sqlBuilder.AppendFormat("UPDATE {0} SET {1} WHERE {2}", this.TableName, $"{this.StatusProperty.ColumnName} = {this.LogicalDeleteValue}", string.Join(" AND ", this.KeyProperties.Select(p => $"{p.ColumnName} = @{p.Name}")));
+                sqlBuilder.AppendFormat("UPDATE {0} SET {1} WHERE {2}", this.TableName, $"{this.StatusProperty.ColumnName} = {this.LogicalDeleteValue}", string.Join(" AND ", this.KeyProperties.Select(p => $"{p.ColumnName} = @{p.Name}")))
+                ;
             }
 
             return new SqlQuery(sqlBuilder.ToString(), entity);
@@ -313,15 +345,21 @@ namespace OpenSource.DB.Repository.SqlGenerator
                 switch (SqlConnector)
                 {
                     case ESqlConnector.MSSQL:
-                        sqlBuilder.AppendFormat("SELECT  * FROM ( SELECT ROW_NUMBER() OVER (ORDER BY {0}) AS RowNum,{1})Repository WHERE RowNum BETWEEN {2}AND {3}", this.IdentityProperty.ColumnName, sql.Substring(sql.ToUpper().IndexOf("SELECT")+6), (from - 1) * to + 1, from * to);
+                        sqlBuilder.AppendFormat(
+                            "SELECT  * FROM ( SELECT ROW_NUMBER() OVER (ORDER BY {0}) AS RowNum,{1})Repository WHERE RowNum BETWEEN {2}AND {3}",
+                            this.IdentityProperty.ColumnName, sql.Substring(sql.ToUpper().IndexOf("SELECT") + 6),
+                            (from - 1) * to + 1, from * to);
                         break;
 
                     case ESqlConnector.MySQL:
-                        sqlBuilder.AppendFormat("; SELECT * FROM ({0} ORDER BY {1})Repository WHERE  {1} LIMIT {2},{3} ", sql, this.IdentityProperty.ColumnName, from - 1, to);
+                        sqlBuilder.AppendFormat(
+                            "; SELECT * FROM ({0} ORDER BY {1})Repository WHERE  {1} LIMIT {2},{3} ", sql,
+                            this.IdentityProperty.ColumnName, from - 1, to);
                         break;
 
                     case ESqlConnector.PostgreSQL:
-                        sqlBuilder.AppendFormat("SELECT * FROM ({0} ORDER BY {1})Repository LIMIT {1} OFFSET {2}", sql, to, (from - 1) * to);
+                        sqlBuilder.AppendFormat("SELECT * FROM ({0} ORDER BY {1})Repository LIMIT {1} OFFSET {2}", sql,
+                            to, (from - 1) * to);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -332,28 +370,51 @@ namespace OpenSource.DB.Repository.SqlGenerator
 
         #endregion Get Select
 
+        #region Expression
+
         /// <summary>
         /// Fill query properties
         /// </summary>
         /// <param name="body">The body.</param>
         /// <param name="linkingType">Type of the linking.</param>
         /// <param name="queryProperties">The query properties.</param>
-        private static void FillQueryProperties(BinaryExpression body, ExpressionType linkingType, ref List<QueryParameter> queryProperties)
+        private static void FillQueryProperties(Expression body, ExpressionType linkingType,
+            ref List<QueryParameter> queryProperties)
         {
-            if (body.NodeType != ExpressionType.AndAlso && body.NodeType != ExpressionType.OrElse)
+            if (body is BinaryExpression)
             {
-                string propertyName = ExpressionHelper.GetPropertyName(body);
-                object propertyValue = ExpressionHelper.GetValue(body.Right);
-                string opr = ExpressionHelper.GetSqlOperator(body.NodeType);
-                string link = ExpressionHelper.GetSqlOperator(linkingType);
+                BinaryExpression be = (BinaryExpression)body;
+                if (body.NodeType != ExpressionType.AndAlso && body.NodeType != ExpressionType.OrElse)
+                {
+                    string propertyName = ExpressionHelper.GetPropertyName(be);
+                    object propertyValue = ExpressionHelper.GetValue(be.Right);
+                    string opr = ExpressionHelper.GetSqlOperator(be.NodeType);
+                    string link = ExpressionHelper.GetSqlOperator(linkingType);
 
+                    queryProperties.Add(new QueryParameter(link, propertyName, propertyValue, opr));
+                }
+                else
+                {
+                    FillQueryProperties(ExpressionHelper.GetExpression(be.Left), body.NodeType,
+                        ref queryProperties);
+                    FillQueryProperties(ExpressionHelper.GetExpression(be.Right), body.NodeType,
+                        ref queryProperties);
+
+                }
+            }
+            else if (body is MethodCallExpression)
+            {
+                MethodCallExpression mce = (MethodCallExpression)body;
+                string link = ExpressionHelper.GetSqlOperator(linkingType);
+                string opr = mce.Method.Name;
+                string propertyName = ExpressionHelper.ExpressionRouter(mce.Arguments[0]);
+                object propertyValue = ExpressionHelper.ExpressionRouter(mce.Arguments[1]);
                 queryProperties.Add(new QueryParameter(link, propertyName, propertyValue, opr));
             }
-            else
-            {
-                FillQueryProperties(ExpressionHelper.GetBinaryExpression(body.Left), body.NodeType, ref queryProperties);
-                FillQueryProperties(ExpressionHelper.GetBinaryExpression(body.Right), body.NodeType, ref queryProperties);
-            }
         }
+
     }
+
+
+    #endregion
 }

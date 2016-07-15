@@ -7,6 +7,9 @@ using System.Data.SqlClient;
 using System.Linq;
 using OpenSource.DB.IRepository;
 using OpenSource.DB.Repository.SqlGenerator;
+using OpenSource.Helps;
+using OpenSource.Helps.DB.DbLamda;
+using OpenSource.Model;
 
 namespace OpenSource.DB.Repository.Tests
 {
@@ -22,8 +25,8 @@ namespace OpenSource.DB.Repository.Tests
         [TestMethod]
         public void FindPageTest()
         {
-            //var result = IocManager.IOCManager.Container.GetInstance<Itbl_PublicAccountRepository>();
-            //result.Find(x => x.Groupid == 2);
+            var result = IocManager.IOCManager.Container.GetInstance<Itbl_AccountRepository>();
+            var getresult = result.FindAll(x => x.Id.Not_In(new long[] { 7}) && x.Id == 7);
             //DapperRepository<tbl_PublicAccount> _dapper = new DapperRepository<tbl_PublicAccount>();
             Assert.IsTrue(true);
         }
@@ -31,9 +34,9 @@ namespace OpenSource.DB.Repository.Tests
         [TestMethod]
         public void UpdateTests()
         {
-            DapperRepository<tbl_PublicAccount> _dapper = new DapperRepository<tbl_PublicAccount>();
-            var result = _dapper.FindAll(x => x.Openid == "o0DpJxBxK9ZzYd8DiObV84GDru64").FirstOrDefault();
-            _dapper.Update(result);
+            var _dapper = IocManager.IOCManager.Container.GetInstance<Itbl_AccountRepository>();
+            var result = _dapper.FindAll(x => x.Id == 7 || x.Id == 6);
+            //_dapper.Update(result);
             Assert.IsTrue(true);
         }
 
@@ -48,7 +51,7 @@ namespace OpenSource.DB.Repository.Tests
         public void InsertTests()
         {
             DapperRepository<tbl_PublicAccount> _dapper = new DapperRepository<tbl_PublicAccount>();
-       
+
             Assert.IsTrue(true);
         }
 
@@ -56,7 +59,7 @@ namespace OpenSource.DB.Repository.Tests
         public void PagesTests()
         {
             DapperRepository<tbl_PublicAccount> _dapper = new DapperRepository<tbl_PublicAccount>();
-         
+
             Assert.IsTrue(true);
         }
     }

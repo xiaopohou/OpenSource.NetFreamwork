@@ -48,6 +48,7 @@
     <Compile Include="DB\DbAttributes\LeftJoinAttribute.cs" />
     <Compile Include="DB\DbAttributes\RightJoinAttribute.cs" />
     <Compile Include="DB\DbAttributes\StatusAttribute.cs" />
+    <Compile Include="DB\DbLamda\LamdaDB.cs" />
     <Compile Include="DB\DbPages\PageList.cs" />
     <Compile Include="NetExtend\ComparableExtensions.cs" />
     <Compile Include="NetExtend\DayOfWeekExtensions.cs" />

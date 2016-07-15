@@ -286,7 +286,7 @@ namespace OpenSource.DB.Repository.SqlGenerator
                 case "In":
                 case "Not_In":
                     builder.Append(string.Format("{0}.{1} {2} ({3}) ", TableName, item.PropertyName,
-                             item.QueryOperator.Replace("_"," "), item.PropertyValue));
+                             item.QueryOperator.Replace("_", " "), item.PropertyValue));
                     break;
                 case "Like":
                 case "Not_Like":
@@ -337,34 +337,34 @@ namespace OpenSource.DB.Repository.SqlGenerator
             return new SqlQuery(string.Format("SELECT COUNT(*) FROM ({0}) Repository", sql), param);
         }
 
-        public virtual SqlQuery GetSelectPages(long from, long to, string sql, object param)
+        public virtual SqlQuery GetSelectPages(long from, long to, string sql, object param, Expression<Func<TEntity, object>> field, bool isDesc)
         {
+            var orderName = ExpressionHelper.GetPropertyName(field);
             var sqlBuilder = new StringBuilder();
-            if (this.IsIdentity)
+
+            switch (SqlConnector)
             {
-                switch (SqlConnector)
-                {
-                    case ESqlConnector.MSSQL:
-                        sqlBuilder.AppendFormat(
-                            "SELECT  * FROM ( SELECT ROW_NUMBER() OVER (ORDER BY {0}) AS RowNum,{1})Repository WHERE RowNum BETWEEN {2}AND {3}",
-                            this.IdentityProperty.ColumnName, sql.Substring(sql.ToUpper().IndexOf("SELECT") + 6),
-                            (from - 1) * to + 1, from * to);
-                        break;
+                case ESqlConnector.MSSQL:
+                    sqlBuilder.AppendFormat(
+                        "SELECT  * FROM ( SELECT ROW_NUMBER() OVER (ORDER BY {0} {4}) AS RowNum,{1})Repository WHERE RowNum BETWEEN {2} AND {3}",
+                        orderName, sql.Substring(sql.ToUpper().IndexOf("SELECT") + 6),
+                        (from - 1) * to + 1, from * to, isDesc ? "DESC" : string.Empty);
+                    break;
 
-                    case ESqlConnector.MySQL:
-                        sqlBuilder.AppendFormat(
-                            "; SELECT * FROM ({0} ORDER BY {1})Repository WHERE  {1} LIMIT {2},{3} ", sql,
-                            this.IdentityProperty.ColumnName, from - 1, to);
-                        break;
+                case ESqlConnector.MySQL:
+                    sqlBuilder.AppendFormat(
+                        "; SELECT * FROM ({0} ORDER BY {1} {4})Repository WHERE  {1} LIMIT {2},{3} ", sql,
+                        orderName, from - 1, to, isDesc ? "DESC" : string.Empty);
+                    break;
 
-                    case ESqlConnector.PostgreSQL:
-                        sqlBuilder.AppendFormat("SELECT * FROM ({0} ORDER BY {1})Repository LIMIT {1} OFFSET {2}", sql,
-                            to, (from - 1) * to);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                case ESqlConnector.PostgreSQL:
+                    sqlBuilder.AppendFormat("SELECT * FROM ({0} ORDER BY {1})Repository LIMIT {1} OFFSET {2}", sql,
+                        to, (from - 1) * to);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
+
             return new SqlQuery(sqlBuilder.ToString(), param);
         }
 

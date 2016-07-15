@@ -43,6 +43,6 @@ namespace OpenSource.DB.Repository.SqlGenerator
 
         SqlQuery GetSelectCount(string sql,object param);
 
-        SqlQuery GetSelectPages(long from, long to,string sql, object param);
+        SqlQuery GetSelectPages(long from, long to,string sql, object param, Expression<Func<TEntity, object>> field, bool isDesc);
     }
 }

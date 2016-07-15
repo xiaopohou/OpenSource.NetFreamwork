@@ -142,12 +142,12 @@ namespace OpenSource.DB.Repository
 
         #region Pages
 
-        public PageListView<TEntity> FindAllPages(long from, long to, Expression<Func<TEntity, bool>> expression)
+        public PageListView<TEntity> FindAllPages(long from, long to, Expression<Func<TEntity, bool>> expression,Expression<Func<TEntity, object>> field, bool isDesc)
         {
 
             var queryResult = SqlGenerator.GetSelectAll(expression);
             var countResult = SqlGenerator.GetSelectCount(queryResult.Sql, queryResult.Param);
-            var pageResult = SqlGenerator.GetSelectPages(from, to, queryResult.Sql, queryResult.Param);
+            var pageResult = SqlGenerator.GetSelectPages(from, to, queryResult.Sql, queryResult.Param, field,isDesc);
             var Connection = MyConnection.Pop();
             var result = new PageListView<TEntity>
             {

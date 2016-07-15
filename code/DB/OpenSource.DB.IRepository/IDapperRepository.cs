@@ -19,6 +19,6 @@ namespace OpenSource.DB.IRepository
         IEnumerable<TEntity> FindAllBetween(object from, object to, Expression<Func<TEntity, object>> btwField);
 
         IEnumerable<TEntity> FindAllBetween(object from, object to, Expression<Func<TEntity, object>> btwField, Expression<Func<TEntity, bool>> expression);
-        PageListView<TEntity> FindAllPages(long from, long to, Expression<Func<TEntity, bool>> expression);
+        PageListView<TEntity> FindAllPages(long from, long to, Expression<Func<TEntity, bool>> expression, Expression<Func<TEntity, object>> field,bool isDesc);
     }
 }

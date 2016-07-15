@@ -26,7 +26,7 @@ namespace OpenSource.DB.Repository.Tests
         public void FindPageTest()
         {
             var result = IocManager.IOCManager.Container.GetInstance<Itbl_AccountRepository>();
-            var getresult = result.FindAll(x => x.Id.Not_In(new long[] { 7}) && x.Id == 7);
+            var getresult = result.FindAllPages(1, 5, null, x => x.Id, true);
             //DapperRepository<tbl_PublicAccount> _dapper = new DapperRepository<tbl_PublicAccount>();
             Assert.IsTrue(true);
         }
